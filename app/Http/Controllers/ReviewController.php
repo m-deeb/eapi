@@ -14,7 +14,8 @@ class ReviewController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @param Product $product
+     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
     public function index(Product $product)
     {
@@ -24,7 +25,7 @@ class ReviewController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return void
      */
     public function create()
     {
@@ -36,7 +37,7 @@ class ReviewController extends Controller
      *
      * @param ReviewRequest $request
      * @param Product $product
-     * @return void
+     * @return \Illuminate\Contracts\Routing\ResponseFactory|\Symfony\Component\HttpFoundation\Response
      */
     public function store(ReviewRequest $request, Product $product)
     {
@@ -63,8 +64,8 @@ class ReviewController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Model\Review  $review
-     * @return \Illuminate\Http\Response
+     * @param  \App\Model\Review $review
+     * @return void
      */
     public function edit(Review $review)
     {
@@ -74,23 +75,32 @@ class ReviewController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Model\Review  $review
-     * @return \Illuminate\Http\Response
+     * @param  \Illuminate\Http\Request $request
+     * @param Product $product
+     * @param  \App\Model\Review $review
+     * @return Review
      */
-    public function update(Request $request, Review $review)
+    public function update(Request $request, Product $product, Review $review)
     {
-        //
+        $review->update($request->all());
+
+        return response([
+            'data' => new ReviewResource($review)
+        ], Response::HTTP_CREATED);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Model\Review  $review
+     * @param Product $product
+     * @param  \App\Model\Review $review
      * @return \Illuminate\Http\Response
+     * @throws \Exception
      */
-    public function destroy(Review $review)
+    public function destroy(Product $product, Review $review)
     {
-        //
+        $review->delete();
+
+        return response(null, Response::HTTP_NO_CONTENT);
     }
 }
